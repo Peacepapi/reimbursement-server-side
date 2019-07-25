@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using reimbursement_server_side.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace reimbursement_server_side
 {
@@ -36,6 +37,9 @@ namespace reimbursement_server_side
                     options.UseSqlite("Data Source=reimbursement.db");
                 }
             });
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info { Title = "Reimbursement", Version = "v1"});
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +57,14 @@ namespace reimbursement_server_side
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Reimbursement Api v1"));
+            
+            app.Run(options => {
+                options.Response.Redirect("/swagger");
+                return Task.CompletedTask;
+            });
         }
     }
 }
